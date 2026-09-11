@@ -1,24 +1,43 @@
+/* ==========================================================================
+   ARS // Global Threat Defense Network
+   1. Tokens      2. Base      3. Utilities     4. Preloader & cursor
+   5. Layout      6. Sections  7. Responsive    8. Reduced motion
+   ========================================================================== */
+
+/* 1. TOKENS ---------------------------------------------------------------- */
 :root {
-  --font-body: 'Rajdhani', sans-serif;
-  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Rajdhani', system-ui, sans-serif;
+  --font-display: 'Orbitron', system-ui, sans-serif;
 
   --color-bg: #01040a;
   --color-surface: #0a0e17;
-  --color-primary-glow: #00d9ff;
-  /* Tactical Cyan */
-  --color-accent-alert: #ff2a6d;
-  /* Alert Red */
+  --color-primary-glow: #00d9ff;          /* Tactical cyan */
+  --color-accent-alert: #ff2a6d;          /* Alert red */
   --color-text: #cdd5f0;
-  --color-text-muted: #6b7a99;
+  --color-text-muted: #8b9ac2;            /* Body copy: 6.9:1 on surface */
+  --color-line: #6b7a99;                  /* Borders / hairlines only */
 
   --transition-fast: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-med: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --content-max: 1200px;
+  --gutter: 2rem;
+  --space-section: 8rem;
+  --header-offset: 6rem;
+  --grid-cell: 40px;
 }
 
-* {
+/* 2. BASE ------------------------------------------------------------------ */
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html.no-scroll {
@@ -29,49 +48,187 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
+  font-weight: 500;
   line-height: 1.6;
-  cursor: none;
   overflow-x: hidden;
-  padding: 10px 20px;
-  max-width: 1440px;
-  margin: 0 auto;
 }
 
+/* Animated grid backdrop. Transform (not background-position) keeps this on
+   the compositor instead of repainting the viewport every frame. */
 body::after {
   content: '';
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: calc(var(--grid-cell) * -1);
   background-image:
     linear-gradient(to right, rgba(107, 122, 153, 0.1) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(107, 122, 153, 0.1) 1px, transparent 1px);
-  background-size: 40px 40px;
+  background-size: var(--grid-cell) var(--grid-cell);
   animation: grid-pan 10s linear infinite;
   pointer-events: none;
   z-index: -1;
 }
 
 @keyframes grid-pan {
-  from {
-    background-position: 0 0;
-  }
-
-  to {
-    background-position: -40px -40px;
-  }
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(calc(var(--grid-cell) * -1), calc(var(--grid-cell) * -1), 0); }
 }
 
+img,
+video {
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-glow);
+  outline-offset: 3px;
+}
+
+/* 3. UTILITIES ------------------------------------------------------------- */
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
+.surface {
+  background-color: var(--color-surface);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10001;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-primary-glow);
+  color: var(--color-bg);
+  font-family: var(--font-display);
+  text-decoration: none;
+  transform: translateY(-150%);
+  transition: transform var(--transition-fast);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* Reveal animations only run when JS is available, so no-JS visitors still
+   see every section. */
+.js .fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.js #main-content {
+  opacity: 0;
+}
+
+/* 4. PRELOADER & CURSOR ---------------------------------------------------- */
+.preloader {
+  display: none;
+}
+
+.js .preloader {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-bg);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-inline: var(--gutter);
+  text-align: center;
+}
+
+.preloader-text {
+  font-family: var(--font-display);
+  font-size: clamp(0.9rem, 3vw, 1.2rem);
+  color: var(--color-primary-glow);
+  margin-bottom: 1rem;
+}
+
+.progress-bar {
+  width: min(250px, 70vw);
+  height: 3px;
+  background-color: rgba(0, 217, 255, 0.2);
+}
+
+.progress-bar-inner {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-primary-glow);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.cursor-dot,
+.cursor-outline {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  z-index: 9999;
+  pointer-events: none;
+  /* Position and hover scale are driven by GSAP; only colour transitions
+     here, because GSAP's inline styles own `transform` and `scale`. */
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  background-color: var(--color-primary-glow);
+  box-shadow: 0 0 10px var(--color-primary-glow);
+}
+
+.cursor-outline {
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 1px solid rgba(0, 217, 255, 0.5);
+}
+
+/* The custom cursor only applies where there is a real pointer to replace, and
+   only once JS has actually taken it over — otherwise the native cursor stays.
+   `.has-custom-cursor` is set by script.js. */
+@media (hover: hover) and (pointer: fine) {
+  .has-custom-cursor body,
+  .has-custom-cursor a,
+  .has-custom-cursor button,
+  .has-custom-cursor .interactive {
+    cursor: none;
+  }
+
+  .has-custom-cursor .cursor-dot,
+  .has-custom-cursor .cursor-outline {
+    display: block;
+  }
+
+  .has-custom-cursor body.hovering .cursor-outline {
+    background-color: rgba(0, 217, 255, 0.1);
+    border-color: transparent;
+  }
+}
+
+/* 5. LAYOUT ---------------------------------------------------------------- */
 section {
-  padding: 8rem 0;
+  padding-block: var(--space-section);
   position: relative;
+  scroll-margin-top: var(--header-offset);
 }
 
 .section-title {
@@ -80,81 +237,11 @@ section {
   text-transform: uppercase;
   text-align: center;
   margin-bottom: 4rem;
+  overflow-wrap: break-word;
 }
 
-.fade-up {
-  opacity: 0;
-  transform: translateY(40px);
-}
-
-.preloader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: var(--color-bg);
-  z-index: 10000;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.preloader-text {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  color: var(--color-primary-glow);
-  margin-bottom: 1rem;
-}
-
-.progress-bar {
-  width: 250px;
-  height: 3px;
-  background-color: rgba(0, 217, 255, 0.2);
-}
-
-.progress-bar-inner {
-  width: 0;
-  height: 100%;
-  background-color: var(--color-primary-glow);
-}
-
-.cursor-dot,
-.cursor-outline {
-  position: fixed;
-  top: 0;
-  left: 0;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  z-index: 9999;
-  pointer-events: none;
-}
-
-.cursor-dot {
-  width: 8px;
-  height: 8px;
-  background-color: var(--color-primary-glow);
-  box-shadow: 0 0 10px var(--color-primary-glow);
-}
-
-.cursor-outline {
-  width: 40px;
-  height: 40px;
-  border: 1px solid rgba(0, 217, 255, 0.5);
-  transition: width 0.2s, height 0.2s, background-color 0.2s;
-}
-
-/* Cursor Hover State */
-body.hovering .cursor-outline {
-  width: 60px;
-  height: 60px;
-  background-color: rgba(0, 217, 255, 0.1);
-  border-color: transparent;
-}
-
-body.hovering .cursor-dot {
-  transform: translate(-50%, -50%) scale(0.5);
+.section-title--left {
+  text-align: left;
 }
 
 .command-deck {
@@ -162,7 +249,7 @@ body.hovering .cursor-dot {
   top: 0;
   left: 0;
   width: 100%;
-  padding: 1.5rem 0;
+  padding-block: 1.5rem;
   z-index: 1000;
   background: linear-gradient(180deg, rgba(1, 4, 10, 0.8) 0%, transparent 100%);
 }
@@ -171,13 +258,15 @@ body.hovering .cursor-dot {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
 }
 
 .logo {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
   text-decoration: none;
   color: var(--color-text);
+  white-space: nowrap;
 }
 
 .nav-status {
@@ -190,34 +279,41 @@ body.hovering .cursor-dot {
 .status-light {
   width: 10px;
   height: 10px;
+  flex: none;
   background-color: #0f0;
   border-radius: 50%;
   box-shadow: 0 0 10px #0f0;
 }
 
 .cta-button {
+  display: inline-block;
   font-family: var(--font-display);
+  font-size: 1rem;
   background: transparent;
   border: 2px solid var(--color-accent-alert);
   color: var(--color-accent-alert);
   padding: 0.6rem 1.5rem;
   text-decoration: none;
-  transition: all var(--transition-fast);
-  cursor: none;
+  white-space: nowrap;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
-.cta-button:hover {
+.cta-button:hover,
+.cta-button:focus-visible {
   background-color: var(--color-accent-alert);
-  color: #fff;
+  /* Near-black on the alert red is 5.7:1; white was only 3.6:1. */
+  color: var(--color-bg);
 }
 
+/* 6. SECTIONS -------------------------------------------------------------- */
+/* Hero */
 #mission-briefing {
-  height: 100vh;
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  position: relative;
   overflow: hidden;
 }
 
@@ -235,43 +331,49 @@ body.hovering .cursor-dot {
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(3rem, 10vw, 8rem);
-  line-height: 1.1;
+  font-size: clamp(2.25rem, 6.5vw, 5rem);
+  line-height: 1.08;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
+  margin-top: 40px;
 }
 
 .glitch-text {
   animation: glitch 2.5s infinite;
-}
-
-.hero-tagline {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin: 1rem 0 2rem;
+  will-change: transform;
 }
 
 @keyframes glitch {
+  2%, 64%  { transform: translate(2px, 0) skew(0deg); }
+  4%, 60%  { transform: translate(-2px, 0) skew(0deg); }
+  62%      { transform: translate(0, 0) skew(5deg); }
+}
 
-  2%,
-  64% {
-    transform: translate(2px, 0) skew(0deg);
-  }
+.hero-tagline {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 700;
+  max-width: 46ch;
+  margin: 1.5rem auto 2.5rem;
+  color: var(--color-text-muted);
+}
 
-  4%,
-  60% {
-    transform: translate(-2px, 0) skew(0deg);
-  }
-
-  62% {
-    transform: translate(0, 0) skew(5deg);
-  }
+/* Squad intel */
+#squad-intel,
+#live-uplink {
+  display: grid;
+  gap: 4rem;
+  align-items: center;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
 #squad-intel {
-  display: grid;
   grid-template-columns: 1fr 1.2fr;
-  gap: 4rem;
-  align-items: center;
+}
+
+#live-uplink {
+  grid-template-columns: 1fr 2fr;
 }
 
 .intel-image {
@@ -281,7 +383,7 @@ body.hovering .cursor-dot {
 }
 
 .intel-content h2 {
-  font-size: 3rem;
+  font-size: clamp(2rem, 6vw, 3rem);
   margin-bottom: 1.5rem;
 }
 
@@ -294,10 +396,7 @@ body.hovering .cursor-dot {
 .redacted-text::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: var(--color-text);
   transition: clip-path var(--transition-med);
   clip-path: inset(0 0 0 0);
@@ -307,18 +406,19 @@ body.hovering .cursor-dot {
   clip-path: inset(0 100% 0 0);
 }
 
+/* Archives + field logs */
 .archives-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  /* min() keeps the tracks from overflowing viewports narrower than 300px. */
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: 2rem;
 }
 
 .dossier-card {
   background-color: var(--color-surface);
-  border: 1px solid var(--color-text-muted);
+  border: 1px solid var(--color-line);
   padding: 1.5rem;
-  position: relative;
-  transition: all var(--transition-fast);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
 }
 
 .dossier-card:hover {
@@ -337,53 +437,71 @@ body.hovering .cursor-dot {
   margin: 0.5rem 0;
 }
 
+/* Arsenal accordion */
 .arsenal-item {
-  border-bottom: 1px solid var(--color-text-muted);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.arsenal-heading {
+  font-size: inherit;
+  font-weight: inherit;
 }
 
 .arsenal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  width: 100%;
   padding: 1.5rem 0;
-  cursor: none;
-}
-
-.arsenal-header h3 {
-  font-size: 1.5rem;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  font-size: clamp(1.15rem, 3.5vw, 1.5rem);
+  font-weight: 700;
+  text-align: left;
 }
 
 .arsenal-toggle {
+  flex: none;
   font-size: 2rem;
+  line-height: 1;
   color: var(--color-primary-glow);
   transition: transform var(--transition-fast);
 }
 
+/* 0fr -> 1fr animates to the content's real height, so long copy can never be
+   clipped the way a fixed max-height clipped it. */
 .arsenal-details {
-  max-height: 0;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--transition-med);
+}
+
+/* The wrapper does the clipping, so the panel's bottom spacing is clipped
+   with it and a collapsed item occupies exactly zero height. */
+.arsenal-details-inner {
   overflow: hidden;
-  transition: max-height var(--transition-med);
+  min-height: 0;
+}
+
+.arsenal-details p {
+  padding-bottom: 1.5rem;
 }
 
 .arsenal-item.active .arsenal-details {
-  max-height: 150px;
-  padding-bottom: 1.5rem;
+  grid-template-rows: 1fr;
 }
 
 .arsenal-item.active .arsenal-toggle {
   transform: rotate(45deg);
 }
 
-#live-uplink {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 4rem;
-  align-items: center;
-}
-
+/* Live uplink */
 .stats-panel h3 {
   font-size: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
 }
 
 .stat-item {
@@ -392,8 +510,9 @@ body.hovering .cursor-dot {
 
 .stat-value {
   font-family: var(--font-display);
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 6vw, 2.5rem);
   color: var(--color-primary-glow);
+  font-variant-numeric: tabular-nums;
 }
 
 #globe-container {
@@ -401,12 +520,51 @@ body.hovering .cursor-dot {
   height: 60vh;
 }
 
+/* Contact */
 .contact-form {
   max-width: 600px;
-  margin: 0 auto;
+  margin-inline: auto;
   text-align: center;
 }
 
+.form-note {
+  margin-bottom: 2rem;
+  color: var(--color-text-muted);
+}
+
+.contact-form textarea {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-line);
+  color: var(--color-text);
+  font: inherit;
+  resize: vertical;
+  transition: border-color var(--transition-fast);
+}
+
+.contact-form textarea::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.contact-form textarea:focus-visible {
+  border-color: var(--color-primary-glow);
+}
+
+.form-status {
+  min-height: 1.6em;
+  margin-top: 1rem;
+  color: var(--color-primary-glow);
+  font-weight: 700;
+}
+
+.form-status[data-state='error'] {
+  color: var(--color-accent-alert);
+}
+
+/* Footer */
 .blackout-footer {
   background-color: #000;
   padding: 4rem 0 2rem;
@@ -415,8 +573,9 @@ body.hovering .cursor-dot {
 
 .footer-links {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 2rem;
+  gap: 1rem 2rem;
   list-style: none;
   margin-bottom: 2rem;
 }
@@ -425,10 +584,10 @@ body.hovering .cursor-dot {
   color: var(--color-text-muted);
   text-decoration: none;
   transition: color var(--transition-fast);
-  cursor: none;
 }
 
-.footer-links a:hover {
+.footer-links a:hover,
+.footer-links a:focus-visible {
   color: var(--color-primary-glow);
 }
 
@@ -437,15 +596,84 @@ body.hovering .cursor-dot {
   font-size: 0.9rem;
 }
 
-/* RESPONSIVE */
+/* 7. RESPONSIVE ------------------------------------------------------------ */
 @media (max-width: 992px) {
+  :root {
+    --space-section: 6rem;
+  }
 
   #squad-intel,
   #live-uplink {
     grid-template-columns: 1fr;
+    gap: 3rem;
   }
 
   .intel-image {
     order: -1;
+    height: 45vh;
+  }
+
+  .section-title {
+    margin-bottom: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --space-section: 4.5rem;
+    --gutter: 1.25rem;
+    --header-offset: 5rem;
+  }
+
+  /* Three nav items do not fit a phone; the ambient status readout is the
+     one that carries no action. */
+  .nav-status {
+    display: none;
+  }
+
+  .command-deck {
+    padding-block: 1rem;
+  }
+
+  .cta-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .intel-image {
+    height: 35vh;
+  }
+
+  #globe-container {
+    height: 45vh;
+  }
+
+  .blackout-footer {
+    padding: 3rem 0 2rem;
+  }
+}
+
+/* 8. REDUCED MOTION -------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body::after,
+  .glitch-text {
+    animation: none;
+  }
+
+  .js .fade-up {
+    opacity: 1;
+    transform: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

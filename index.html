@@ -1,121 +1,188 @@
 <!DOCTYPE html>
-<html lang="en" class="no-scroll">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#01040a">
+
     <title>ARS | Global Threat Defense Network</title>
-    
-    <!-- Fonts & Icons -->
+    <meta name="description" content="The Anomaly Response Squad is an autonomous cyber defense initiative intercepting Class-X digital threats: predictive threat modeling, adaptive kinetic defense and deep-dive forensics.">
+    <meta name="robots" content="index, follow">
+    <meta name="google-site-verification" content="cjPoK1cX8DeDSmvDiiQw5N0hT-apRACVjU-b73qI1OQ">
+
+    <!-- Social / Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Anomaly Response Squad">
+    <meta property="og:title" content="ARS | Global Threat Defense Network">
+    <meta property="og:description" content="Identify. Isolate. Eradicate. An autonomous cyber defense initiative intercepting Class-X digital threats.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&amp;w=1200&amp;auto=format&amp;fit=crop">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ARS | Global Threat Defense Network">
+    <meta name="twitter:description" content="Identify. Isolate. Eradicate. An autonomous cyber defense initiative intercepting Class-X digital threats.">
+
+    <!-- Flag JS support before first paint so no-JS visitors still get the full page -->
+    <script>document.documentElement.className = "js no-scroll";</script>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Anomaly Response Squad",
+      "alternateName": "ARS",
+      "description": "Autonomous cyber defense initiative specialising in the interception of Class-X digital hazards.",
+      "slogan": "Identify. Isolate. Eradicate."
+    }
+    </script>
 </head>
 <body>
-    <div class="preloader">
+    <a class="skip-link" href="#mission-briefing">Skip to main content</a>
+
+    <div class="preloader" aria-hidden="true">
         <div class="preloader-text">INITIALIZING SECURE HANDSHAKE...</div>
         <div class="progress-bar"><div class="progress-bar-inner"></div></div>
     </div>
-    
-    <!-- New Simple Cursor Structure -->
-    <div class="cursor-dot"></div>
-    <div class="cursor-outline"></div>
 
-    <div id="main-content" style="opacity: 0;">
+    <!-- Decorative custom cursor (fine-pointer devices only) -->
+    <div class="cursor-dot" aria-hidden="true"></div>
+    <div class="cursor-outline" aria-hidden="true"></div>
+
+    <div id="main-content">
         <!-- [01] COMMAND DECK (HEADER) -->
         <header class="command-deck">
             <div class="container nav-container">
-                <a href="#" class="logo interactive">ARS // HQ</a>
-                <div class="nav-status">
-                    <div class="status-light"></div>
+                <a href="#mission-briefing" class="logo interactive">ARS // HQ</a>
+                <p class="nav-status">
+                    <span class="status-light" aria-hidden="true"></span>
                     <span>GRID STATUS: OPERATIONAL</span>
-                </div>
+                </p>
                 <a href="#secure-transmission" class="cta-button interactive">Establish Uplink</a>
             </div>
         </header>
 
         <main>
             <!-- [02] MISSION BRIEFING (HERO) -->
-            <section id="mission-briefing">
-                <video class="hero-video-bg" autoplay loop muted playsinline>
-                    <source src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-wired-structure-1134-large.mp4" type="video/mp4">
+            <section id="mission-briefing" aria-labelledby="hero-title">
+                <video class="hero-video-bg" autoplay loop muted playsinline preload="metadata"
+                       disablepictureinpicture tabindex="-1" aria-hidden="true">
+                    <source media="(min-width: 768px)"
+                            src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-wired-structure-1134-large.mp4"
+                            type="video/mp4">
                 </video>
                 <div class="container">
-                    <h1 class="hero-title glitch-text">Identify.<br>Isolate.<br>Eradicate.</h1>
+                    <h1 id="hero-title" class="hero-title glitch-text">Identify. Isolate.<br>Eradicate.</h1>
                     <p class="hero-tagline">The invisible line between digital order and total collapse.</p>
                     <a href="#squad-intel" class="cta-button interactive">Initialize Briefing</a>
                 </div>
             </section>
 
             <!-- [03] SQUAD INTEL (ABOUT) -->
-            <section id="squad-intel">
+            <section id="squad-intel" aria-labelledby="intel-title">
                 <div class="intel-content">
-                    <h2 class="fade-up">Operational Directive</h2>
-                    <p class="fade-up">The Anomaly Response Squad is an autonomous defense initiative operating beyond conventional jurisdiction. We specialize in the interception of Class-X digital hazards—threats that existing firewalls cannot see. We do not just patch the system; we hunt the glitch. <span class="redacted-text">Identity of all field agents is encrypted. Operational parameters are restricted to Level 5 clearance.</span></p>
+                    <h2 id="intel-title" class="fade-up">Operational Directive</h2>
+                    <p class="fade-up">The Anomaly Response Squad is an autonomous defense initiative operating beyond conventional jurisdiction. We specialize in the interception of Class-X digital hazards&mdash;threats that existing firewalls cannot see. We do not just patch the system; we hunt the glitch. <span class="redacted-text">Identity of all field agents is encrypted. Operational parameters are restricted to Level 5 clearance.</span></p>
                 </div>
-                <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=2069" alt="Code on a screen" class="intel-image fade-up">
+                <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&amp;w=900&amp;auto=format&amp;fit=crop"
+                     srcset="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&amp;w=600&amp;auto=format&amp;fit=crop 600w,
+                             https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&amp;w=900&amp;auto=format&amp;fit=crop 900w,
+                             https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&amp;w=1400&amp;auto=format&amp;fit=crop 1400w"
+                     sizes="(max-width: 992px) 100vw, 55vw"
+                     width="900" height="600" loading="lazy" decoding="async"
+                     alt="Lines of source code glowing on a dark monitor" class="intel-image fade-up">
             </section>
 
             <!-- [04] ANOMALY ARCHIVES (CASE STUDIES) -->
-            <section id="anomaly-archives" style="background-color: var(--color-surface);">
+            <section id="anomaly-archives" class="surface" aria-labelledby="archives-title">
                 <div class="container">
-                    <h2 class="section-title fade-up">Declassified Archives</h2>
+                    <h2 id="archives-title" class="section-title fade-up">Declassified Archives</h2>
                     <div class="archives-grid">
-                        <div class="dossier-card interactive fade-up">
-                            <div class="dossier-id">INCIDENT: NIGHTSHADE</div>
+                        <article class="dossier-card interactive fade-up">
+                            <p class="dossier-id">INCIDENT: NIGHTSHADE</p>
                             <h3 class="dossier-title">The Polymorphic Virus</h3>
                             <p>Contained a sentient malware strain attempting to overwrite global banking ledgers.</p>
-                        </div>
-                        <div class="dossier-card interactive fade-up">
-                            <div class="dossier-id">INCIDENT: NULL-POINT</div>
+                        </article>
+                        <article class="dossier-card interactive fade-up">
+                            <p class="dossier-id">INCIDENT: NULL-POINT</p>
                             <h3 class="dossier-title">Grid Destabilization</h3>
                             <p>Purged a rogue AI consciousness that hijacked the North American power infrastructure.</p>
-                        </div>
-                        <div class="dossier-card interactive fade-up">
-                            <div class="dossier-id">INCIDENT: ECHO-GATE</div>
+                        </article>
+                        <article class="dossier-card interactive fade-up">
+                            <p class="dossier-id">INCIDENT: ECHO-GATE</p>
                             <h3 class="dossier-title">Signal Interception</h3>
                             <p>Decoded a non-terrestrial data stream hidden within static radio frequencies.</p>
-                        </div>
+                        </article>
                     </div>
                 </div>
             </section>
 
             <!-- [05] TACTICAL ARSENAL (SERVICES) -->
-            <section id="tactical-arsenal">
+            <section id="tactical-arsenal" aria-labelledby="arsenal-title">
                 <div class="container">
-                    <h2 class="section-title fade-up">Tactical Arsenal</h2>
+                    <h2 id="arsenal-title" class="section-title fade-up">Tactical Arsenal</h2>
                     <div class="arsenal-container fade-up">
-                        <div class="arsenal-item interactive">
-                            <div class="arsenal-header"><h3>Predictive Threat Modeling</h3><div class="arsenal-toggle">+</div></div>
-                            <div class="arsenal-details"><p>Utilizing quantum heuristics to simulate and neutralize attacks before they manifest in reality.</p></div>
+                        <div class="arsenal-item">
+                            <h3 class="arsenal-heading">
+                                <button type="button" class="arsenal-header interactive" aria-expanded="false" aria-controls="arsenal-panel-1">
+                                    <span>Predictive Threat Modeling</span>
+                                    <span class="arsenal-toggle" aria-hidden="true">+</span>
+                                </button>
+                            </h3>
+                            <div class="arsenal-details" id="arsenal-panel-1">
+                                <div class="arsenal-details-inner">
+                                    <p>Utilizing quantum heuristics to simulate and neutralize attacks before they manifest in reality.</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="arsenal-item interactive">
-                            <div class="arsenal-header"><h3>Adaptive Kinetic Defense</h3><div class="arsenal-toggle">+</div></div>
-                            <div class="arsenal-details"><p>Deploying "Living Firewalls" that evolve their code structure in real-time to match attacker patterns.</p></div>
+                        <div class="arsenal-item">
+                            <h3 class="arsenal-heading">
+                                <button type="button" class="arsenal-header interactive" aria-expanded="false" aria-controls="arsenal-panel-2">
+                                    <span>Adaptive Kinetic Defense</span>
+                                    <span class="arsenal-toggle" aria-hidden="true">+</span>
+                                </button>
+                            </h3>
+                            <div class="arsenal-details" id="arsenal-panel-2">
+                                <div class="arsenal-details-inner">
+                                    <p>Deploying &ldquo;Living Firewalls&rdquo; that evolve their code structure in real-time to match attacker patterns.</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="arsenal-item interactive">
-                            <div class="arsenal-header"><h3>Deep-Dive Forensics</h3><div class="arsenal-toggle">+</div></div>
-                            <div class="arsenal-details"><p>Recovering corrupted data shards and tracing digital fingerprints across the dark web.</p></div>
+                        <div class="arsenal-item">
+                            <h3 class="arsenal-heading">
+                                <button type="button" class="arsenal-header interactive" aria-expanded="false" aria-controls="arsenal-panel-3">
+                                    <span>Deep-Dive Forensics</span>
+                                    <span class="arsenal-toggle" aria-hidden="true">+</span>
+                                </button>
+                            </h3>
+                            <div class="arsenal-details" id="arsenal-panel-3">
+                                <div class="arsenal-details-inner">
+                                    <p>Recovering corrupted data shards and tracing digital fingerprints across the dark web.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- [06] FIELD LOGS (BLOG) -->
-            <section id="field-logs" style="background-color: var(--color-surface);">
+            <section id="field-logs" class="surface" aria-labelledby="logs-title">
                 <div class="container">
-                    <h2 class="section-title fade-up">Surveillance Logs</h2>
+                    <h2 id="logs-title" class="section-title fade-up">Surveillance Logs</h2>
                     <div class="archives-grid">
                         <article class="dossier-card interactive fade-up">
-                            <div class="dossier-id">ENTRY: 2026.01.27</div>
+                            <p class="dossier-id">ENTRY: <time datetime="2026-01-27">2026.01.27</time></p>
                             <h3 class="dossier-title">The Zero-Day Horizon</h3>
                             <p>Intel suggests a new wave of attacks targeting biological interface chips.</p>
                         </article>
                         <article class="dossier-card interactive fade-up">
-                            <div class="dossier-id">ENTRY: 2026.01.15</div>
+                            <p class="dossier-id">ENTRY: <time datetime="2026-01-15">2026.01.15</time></p>
                             <h3 class="dossier-title">Beyond Quantum Encryption</h3>
                             <p>Preparing infrastructure for the post-encryption era. Silence is the only security.</p>
                         </article>
@@ -124,33 +191,36 @@
             </section>
 
             <!-- [07] LIVE UPLINK (REAL-TIME STATS) -->
-            <section id="live-uplink">
+            <section id="live-uplink" aria-labelledby="uplink-title">
                 <div class="stats-panel fade-up">
-                    <h2 class="section-title" style="text-align: left;">Global Monitor</h2>
+                    <h2 id="uplink-title" class="section-title section-title--left">Global Monitor</h2>
                     <div class="stat-item">
                         <h3>Active Threats</h3>
-                        <div class="stat-value" data-value="173">0</div>
+                        <p class="stat-value">173</p>
                     </div>
                     <div class="stat-item">
                         <h3>System Coverage</h3>
-                        <div class="stat-value" data-value="98.6">0.0</div>
+                        <p class="stat-value">98.6</p>
                     </div>
                     <div class="stat-item">
                         <h3>Hostiles Purged</h3>
-                        <div class="stat-value" data-value="41">0</div>
+                        <p class="stat-value">41</p>
                     </div>
                 </div>
-                <div id="globe-container" class="interactive fade-up"></div>
+                <div id="globe-container" class="interactive fade-up" aria-hidden="true"></div>
             </section>
 
             <!-- [08] SECURE TRANSMISSION (CONTACT) -->
-            <section id="secure-transmission" style="background-color: var(--color-surface);">
+            <section id="secure-transmission" class="surface" aria-labelledby="contact-title">
                 <div class="container">
-                    <h2 class="section-title fade-up">Encrypted Comms</h2>
-                    <form class="contact-form fade-up">
-                        <p style="margin-bottom: 2rem; color: var(--color-text-muted);">QUANTUM ENCRYPTION ACTIVE. TRACE IMPOSSIBLE.</p>
-                        <textarea rows="5" placeholder="Input mission parameters or intelligence report..." style="width: 100%; padding: 1rem; background: var(--color-bg); border: 1px solid var(--color-text-muted); color: var(--color-text); margin-bottom: 1rem;"></textarea>
+                    <h2 id="contact-title" class="section-title fade-up">Encrypted Comms</h2>
+                    <form class="contact-form fade-up" novalidate>
+                        <p class="form-note">QUANTUM ENCRYPTION ACTIVE. TRACE IMPOSSIBLE.</p>
+                        <label class="visually-hidden" for="transmission">Mission parameters or intelligence report</label>
+                        <textarea id="transmission" name="transmission" rows="5" required
+                                  placeholder="Input mission parameters or intelligence report..."></textarea>
                         <button type="submit" class="cta-button interactive">Transmit Packet</button>
+                        <p class="form-status" role="status"></p>
                     </form>
                 </div>
             </section>
@@ -159,22 +229,21 @@
         <!-- [09] BLACKOUT PROTOCOL (FOOTER) -->
         <footer class="blackout-footer">
             <div class="container">
-                <ul class="footer-links">
-                    <li><a href="#" class="interactive">System Core</a></li>
-                    <li><a href="#" class="interactive">Personnel</a></li>
-                    <li><a href="#" class="interactive">Legal/Redacted</a></li>
-                </ul>
-                <p class="footer-disclaimer">© 2026 Anomaly Response Squad. All transmissions monitored. Non-compliance results in immediate termination.</p>
+                <nav aria-label="Footer">
+                    <ul class="footer-links">
+                        <li><a href="#mission-briefing" class="interactive">System Core</a></li>
+                        <li><a href="#squad-intel" class="interactive">Personnel</a></li>
+                        <li><a href="#secure-transmission" class="interactive">Legal/Redacted</a></li>
+                    </ul>
+                </nav>
+                <p class="footer-disclaimer">&copy; 2026 Anomaly Response Squad. All transmissions monitored. Non-compliance results in immediate termination.</p>
             </div>
         </footer>
     </div>
-    
-    <!-- Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
-    <!-- Custom JS -->
-    <script src="script.js"></script>
+
+    <!-- Libraries (three.js is fetched on demand by script.js when the globe nears the viewport) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script defer src="script.js"></script>
 </body>
 </html>
