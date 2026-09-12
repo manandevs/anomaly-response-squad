@@ -540,9 +540,14 @@ section {
   font-variant-numeric: tabular-nums;
 }
 
-#globe-container {
+.uplink-content .section-title {
+  margin-bottom: 2.5rem;
+}
+
+.globe-image {
   width: 100%;
   height: 60vh;
+  object-fit: contain;
 }
 
 /* Contact */
@@ -648,6 +653,11 @@ section {
     height: 45vh;
   }
 
+  .globe-image {
+    order: -1;
+    height: 50vh;
+  }
+
   .section-title {
     margin-bottom: 3rem;
   }
@@ -679,7 +689,7 @@ section {
     height: 35vh;
   }
 
-  #globe-container {
+  .globe-image {
     height: 45vh;
   }
 
