@@ -1,320 +1,268 @@
-/* ARS // Global Threat Defense Network
-   Loaded with `defer`, so the DOM is already parsed when this runs. */
-/* global gsap, ScrollTrigger, THREE */
-(() => {
-  'use strict';
+/* ==========================================================================
+   ARS // Global Threat Defense Network
+   Pure JavaScript Implementation (No External Dependencies / Three.js Free)
+   ========================================================================== */
 
-  const root = document.documentElement;
-  const body = document.body;
+document.addEventListener("DOMContentLoaded", () => {
+  initPreloader();
+  initCustomCursor();
+  initAccordion();
+  initRedactedText();
+  initTacticalCanvas();
+  initContactForm();
+});
 
-  const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const hasGsap = typeof gsap !== 'undefined';
-  const hasScrollTrigger = hasGsap && typeof ScrollTrigger !== 'undefined';
+/* 1. PRELOADER ------------------------------------------------------------- */
+function initPreloader() {
+  const preloader = document.querySelector(".preloader");
+  const progressBar = document.querySelector(".progress-bar-inner");
+  const mainContent = document.getElementById("main-content");
+  
+  if (!preloader || !progressBar || !mainContent) return;
 
-  if (hasScrollTrigger) gsap.registerPlugin(ScrollTrigger);
-
-  /* --- PRELOADER ---------------------------------------------------------
-     Revealing is idempotent and also runs from a timeout, so a blocked CDN or
-     a failed tween can never leave the page blank and unscrollable. */
-  const preloader = document.querySelector('.preloader');
-  const mainContent = document.getElementById('main-content');
-  let revealed = false;
-
-  function revealSite() {
-    if (revealed) return;
-    revealed = true;
-    if (preloader) preloader.style.display = 'none';
-    root.classList.remove('no-scroll');
-    if (mainContent) mainContent.style.opacity = '1';
-    initAnimations();
-  }
-
-  if (hasGsap && !prefersReducedMotion) {
-    gsap.to('.progress-bar-inner', {
-      scaleX: 1,
-      duration: 2,
-      ease: 'power2.out',
-      onComplete: () => gsap.to(preloader, { opacity: 0, duration: 0.5, onComplete: revealSite })
-    });
-    setTimeout(revealSite, 5000); // safety net
-  } else {
-    revealSite();
-  }
-
-  /* --- CUSTOM CURSOR -----------------------------------------------------
-     One delegated pointerover listener replaces two listeners per element. */
-  if (finePointer && hasGsap) {
-    const dot = document.querySelector('.cursor-dot');
-    const outline = document.querySelector('.cursor-outline');
-
-    // Only hide the native cursor once the replacement is actually wired up.
-    root.classList.add('has-custom-cursor');
-
-    const moveDotX = gsap.quickTo(dot, 'x', { duration: 0.1, ease: 'power3.out' });
-    const moveDotY = gsap.quickTo(dot, 'y', { duration: 0.1, ease: 'power3.out' });
-    const moveOutlineX = gsap.quickTo(outline, 'x', { duration: 0.35, ease: 'power3.out' });
-    const moveOutlineY = gsap.quickTo(outline, 'y', { duration: 0.35, ease: 'power3.out' });
-
-    addEventListener('pointermove', (e) => {
-      moveDotX(e.clientX);
-      moveDotY(e.clientY);
-      moveOutlineX(e.clientX);
-      moveOutlineY(e.clientY);
-    }, { passive: true });
-
-    /* The hover scale has to run through GSAP: GSAP writes `scale: none`
-       alongside its inline `transform`, which would override a stylesheet
-       `scale` rule (this is why the original dot-shrink never fired). */
-    const HOVER_TARGETS = 'a, button, .interactive';
-    let hovering = false;
-
-    document.addEventListener('pointerover', (e) => {
-      const isHover = !!e.target.closest(HOVER_TARGETS);
-      if (isHover === hovering) return;
-      hovering = isHover;
-      body.classList.toggle('hovering', isHover);
-      gsap.to(dot, { scale: isHover ? 0.5 : 1, duration: 0.2, ease: 'power2.out', overwrite: 'auto' });
-      gsap.to(outline, { scale: isHover ? 1.5 : 1, duration: 0.2, ease: 'power2.out', overwrite: 'auto' });
-    }, { passive: true });
-  }
-
-  /* --- ARSENAL ACCORDION -------------------------------------------------
-     Delegated, and bound immediately rather than after the preloader so the
-     section stays usable even if GSAP never loads. Keyboard support comes
-     free from the <button> elements in the markup. */
-  const arsenal = document.querySelector('.arsenal-container');
-  if (arsenal) {
-    arsenal.addEventListener('click', (e) => {
-      const trigger = e.target.closest('.arsenal-header');
-      if (!trigger) return;
-      const item = trigger.closest('.arsenal-item');
-      const isOpen = item.classList.toggle('active');
-      trigger.setAttribute('aria-expanded', String(isOpen));
-    });
-  }
-
-  /* --- CONTACT FORM ------------------------------------------------------ */
-  const form = document.querySelector('.contact-form');
-  if (form) {
-    const field = form.querySelector('#transmission');
-    const status = form.querySelector('.form-status');
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault(); // no backend: never reload and discard the draft
-      if (!field.value.trim()) {
-        status.dataset.state = 'error';
-        status.textContent = 'TRANSMISSION EMPTY. INPUT REQUIRED.';
-        field.focus();
-        return;
-      }
-      delete status.dataset.state;
-      status.textContent = 'PACKET TRANSMITTED. AWAITING HANDSHAKE.';
-      form.reset();
-    });
-  }
-
-  /* --- HERO VIDEO -------------------------------------------------------- */
-  if (prefersReducedMotion) {
-    const video = document.querySelector('.hero-video-bg');
-    if (video) {
-      video.removeAttribute('autoplay');
-      video.pause();
-    }
-  }
-
-  /* --- SCROLL-DRIVEN ANIMATIONS ------------------------------------------ */
-  function initAnimations() {
-    if (hasScrollTrigger && !prefersReducedMotion) {
-      // One batched trigger instead of one ScrollTrigger per element.
-      ScrollTrigger.batch('.fade-up', {
-        start: 'top 85%',
-        onEnter: (batch) => gsap.to(batch, {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          stagger: 0.1,
-          ease: 'power3.out',
-          overwrite: true
-        })
-      });
-
-      const redacted = document.querySelector('.redacted-text');
-      if (redacted) {
-        ScrollTrigger.create({
-          trigger: redacted,
-          start: 'top 80%',
-          once: true,
-          onEnter: () => redacted.classList.add('revealed')
-        });
-      }
-
-      // Trigger positions shift once fonts and the lazy image land.
-      addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.floor(Math.random() * 15) + 10;
+    
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(interval);
+      
+      progressBar.style.transform = "scaleX(1)";
+      
+      setTimeout(() => {
+        preloader.style.transition = "opacity 0.5s ease";
+        preloader.style.opacity = "0";
+        
+        mainContent.style.transition = "opacity 0.5s ease";
+        mainContent.style.opacity = "1";
+        
+        document.documentElement.classList.remove("no-scroll");
+        
+        setTimeout(() => {
+          preloader.style.display = "none";
+          initScrollAnimations();
+        }, 500);
+      }, 200);
     } else {
-      document.querySelectorAll('.fade-up').forEach((el) => {
-        el.style.opacity = '1';
-        el.style.transform = 'none';
-      });
-      document.querySelector('.redacted-text')?.classList.add('revealed');
+      progressBar.style.transform = `scaleX(${progress / 100})`;
     }
+  }, 60);
+}
 
-    initCounters();
-    initGlobeWhenVisible();
+/* 2. CUSTOM CURSOR --------------------------------------------------------- */
+function initCustomCursor() {
+  const dot = document.querySelector(".cursor-dot");
+  const outline = document.querySelector(".cursor-outline");
+  
+  if (!dot || !outline) return;
+  
+  document.documentElement.classList.add("has-custom-cursor");
+
+  let mouseX = 0, mouseY = 0;
+  let outlineX = 0, outlineY = 0;
+
+  window.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    
+    dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+  });
+
+  function animateCursor() {
+    outlineX += (mouseX - outlineX) * 0.15;
+    outlineY += (mouseY - outlineY) * 0.15;
+    
+    outline.style.transform = `translate3d(${outlineX}px, ${outlineY}px, 0)`;
+    requestAnimationFrame(animateCursor);
+  }
+  
+  animateCursor();
+
+  const interactives = document.querySelectorAll("a, button, .interactive");
+  interactives.forEach((el) => {
+    el.addEventListener("mouseenter", () => document.body.classList.add("hovering"));
+    el.addEventListener("mouseleave", () => document.body.classList.remove("hovering"));
+  });
+}
+
+/* 3. SCROLL REVEAL ANIMATIONS ---------------------------------------------- */
+function initScrollAnimations() {
+  const elements = document.querySelectorAll(".fade-up");
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.style.transition = "opacity 0.8s ease, transform 0.8s ease";
+        entry.target.style.opacity = "1";
+        entry.target.style.transform = "translateY(0)";
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  elements.forEach((el) => observer.observe(el));
+}
+
+/* 4. ARSENAL ACCORDION ----------------------------------------------------- */
+function initAccordion() {
+  const headers = document.querySelectorAll(".arsenal-header");
+
+  headers.forEach((header) => {
+    header.addEventListener("click", () => {
+      const item = header.closest(".arsenal-item");
+      const isExpanded = header.getAttribute("aria-expanded") === "true";
+
+      document.querySelectorAll(".arsenal-item").forEach((i) => {
+        i.classList.remove("active");
+        const btn = i.querySelector(".arsenal-header");
+        if (btn) btn.setAttribute("aria-expanded", "false");
+      });
+
+      if (!isExpanded) {
+        item.classList.add("active");
+        header.setAttribute("aria-expanded", "true");
+      }
+    });
+  });
+}
+
+/* 5. REDACTED TEXT REVEAL -------------------------------------------------- */
+function initRedactedText() {
+  const redactedElements = document.querySelectorAll(".redacted-text");
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("revealed");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  redactedElements.forEach((el) => observer.observe(el));
+}
+
+/* 6. NATIVE CANVAS TACTICAL MONITOR (Replaces Three.js) -------------------- */
+function initTacticalCanvas() {
+  const container = document.getElementById("globe-container");
+  if (!container) return;
+
+  const canvas = document.createElement("canvas");
+  container.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+
+  let width, height, radius;
+  let angle = 0;
+
+  function resize() {
+    width = canvas.width = container.clientWidth;
+    height = canvas.height = container.clientHeight;
+    radius = Math.min(width, height) * 0.35;
   }
 
-  /* --- STAT COUNTERS -----------------------------------------------------
-     The final values live in the HTML (correct for crawlers and no-JS), and
-     are rewound to zero here before counting up. */
-  function initCounters() {
-    const values = document.querySelectorAll('.stat-value');
-    if (!values.length || prefersReducedMotion || !('IntersectionObserver' in window)) return;
+  window.addEventListener("resize", resize);
+  resize();
 
-    const targets = new Map();
-    values.forEach((el) => {
-      const target = parseFloat(el.textContent);
-      if (Number.isNaN(target)) return;
-      const decimals = (el.textContent.split('.')[1] || '').length;
-      targets.set(el, { target, decimals });
-      el.textContent = (0).toFixed(decimals);
+  // Seed static target nodes
+  const nodes = Array.from({ length: 24 }, () => ({
+    theta: Math.random() * Math.PI * 2,
+    phi: (Math.random() - 0.5) * Math.PI,
+    size: Math.random() * 3 + 2,
+    pulse: Math.random() * Math.PI
+  }));
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+    const cx = width / 2;
+    const cy = height / 2;
+
+    angle += 0.008;
+
+    // Outer Radar Rings
+    ctx.strokeStyle = "rgba(0, 217, 255, 0.15)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.arc(cx, cy, radius * 0.65, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Rotating Longitude Wireframes
+    for (let i = 0; i < 6; i++) {
+      const rotAngle = angle + (i * Math.PI) / 6;
+      const xRad = Math.cos(rotAngle) * radius;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, Math.abs(xRad), radius, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(0, 217, 255, 0.08)";
+      ctx.stroke();
+    }
+
+    // Latitude Wireframes
+    for (let i = -2; i <= 2; i++) {
+      const yOffset = (i / 3) * radius;
+      const rLat = Math.sqrt(Math.max(0, radius * radius - yOffset * yOffset));
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + yOffset, rLat, rLat * 0.3, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(0, 217, 255, 0.08)";
+      ctx.stroke();
+    }
+
+    // Nodes Projection
+    nodes.forEach((node) => {
+      node.pulse += 0.04;
+      const currentTheta = node.theta + angle;
+
+      const x = cx + radius * Math.cos(node.phi) * Math.sin(currentTheta);
+      const y = cy + radius * Math.sin(node.phi);
+      const z = radius * Math.cos(node.phi) * Math.cos(currentTheta);
+
+      // Render nodes on the front visible hemisphere
+      if (z > 0) {
+        const alpha = (z / radius) * 0.8 + 0.2;
+        const pulseSize = node.size + Math.sin(node.pulse) * 1.5;
+
+        ctx.fillStyle = `rgba(0, 217, 255, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(x, y, Math.max(1, pulseSize), 0, Math.PI * 2);
+        ctx.fill();
+
+        // Target Indicator Rings
+        ctx.strokeStyle = `rgba(255, 42, 109, ${alpha * 0.6})`;
+        ctx.beginPath();
+        ctx.arc(x, y, pulseSize + 4, 0, Math.PI * 2);
+        ctx.stroke();
+      }
     });
 
-    const observer = new IntersectionObserver((entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        obs.unobserve(entry.target);
-        countUp(entry.target, targets.get(entry.target));
-      });
-    }, { threshold: 0.25 });
-
-    targets.forEach((_, el) => observer.observe(el));
+    requestAnimationFrame(draw);
   }
 
-  function countUp(el, { target, decimals }) {
-    const duration = 2000;
-    const start = performance.now();
+  draw();
+}
 
-    const step = (now) => {
-      const t = Math.min((now - start) / duration, 1);
-      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; // power1.inOut
-      el.textContent = (target * eased).toFixed(decimals);
-      if (t < 1) requestAnimationFrame(step);
-    };
+/* 7. CONTACT FORM TRANSMISSION --------------------------------------------- */
+function initContactForm() {
+  const form = document.querySelector(".contact-form");
+  const status = document.querySelector(".form-status");
 
-    requestAnimationFrame(step);
-  }
+  if (!form || !status) return;
 
-  /* --- THREE.JS GLOBE ----------------------------------------------------
-     ~580KB of library for one decorative mesh, so it is only fetched once the
-     globe is close to the viewport. */
-  function initGlobeWhenVisible() {
-    const container = document.getElementById('globe-container');
-    if (!container || !('IntersectionObserver' in window)) return;
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const textarea = form.querySelector("textarea");
 
-    const observer = new IntersectionObserver((entries, obs) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
-      obs.disconnect();
-      loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js')
-        .then(() => initGlobe(container))
-        .catch(() => { /* decorative only: leave the slot empty */ });
-    }, { rootMargin: '300px' });
-
-    observer.observe(container);
-  }
-
-  function loadScript(src) {
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = src;
-      script.async = true;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.appendChild(script);
-    });
-  }
-
-  function initGlobe(container) {
-    let renderer;
-    try {
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'low-power' });
-    } catch (err) {
-      return; // no WebGL context available
+    if (!textarea.value.trim()) {
+      status.textContent = "ERROR: TRANSMISSION EMPTY.";
+      status.setAttribute("data-state", "error");
+      return;
     }
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.z = 7;
+    status.textContent = "ENCRYPTING PACKET...";
+    status.removeAttribute("data-state");
 
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    container.appendChild(renderer.domElement);
-
-    const globe = new THREE.Mesh(
-      new THREE.SphereGeometry(3, 32, 32),
-      new THREE.MeshBasicMaterial({ color: 0x00d9ff, wireframe: true })
-    );
-    scene.add(globe);
-
-    // One geometry and one material shared by every marker.
-    const anomalyGeom = new THREE.SphereGeometry(0.05, 8, 8);
-    const anomalyMat = new THREE.MeshBasicMaterial({ color: 0xff2a6d });
-    for (let i = 0; i < 10; i++) {
-      const anomaly = new THREE.Mesh(anomalyGeom, anomalyMat);
-      anomaly.position.setFromSphericalCoords(3.1, Math.random() * Math.PI, Math.random() * 2 * Math.PI);
-      globe.add(anomaly);
-    }
-
-    renderer.render(scene, camera);
-
-    if (prefersReducedMotion) return; // static globe, no loop, no tilt
-
-    /* Render loop, paused whenever the globe is off-screen or the tab is
-       hidden, instead of burning a frame budget forever. */
-    let frameId = null;
-    let onScreen = false;
-
-    const render = () => {
-      frameId = requestAnimationFrame(render);
-      globe.rotation.y += 0.002;
-      renderer.render(scene, camera);
-    };
-    const start = () => { if (frameId === null) render(); };
-    const stop = () => {
-      if (frameId !== null) { cancelAnimationFrame(frameId); frameId = null; }
-    };
-    const sync = () => (onScreen && !document.hidden ? start() : stop());
-
-    new IntersectionObserver((entries) => {
-      onScreen = entries[0].isIntersecting;
-      sync();
-    }).observe(container);
-
-    document.addEventListener('visibilitychange', sync);
-
-    // Pointer tilt: quickTo reuses a single tween rather than allocating one
-    // per pointermove event.
-    if (finePointer && hasGsap) {
-      const lookAtCentre = () => camera.lookAt(scene.position);
-      const tiltX = gsap.quickTo(camera.position, 'x', { duration: 1, ease: 'power2.out', onUpdate: lookAtCentre });
-      const tiltY = gsap.quickTo(camera.position, 'y', { duration: 1, ease: 'power2.out', onUpdate: lookAtCentre });
-
-      container.addEventListener('pointermove', (e) => {
-        const rect = container.getBoundingClientRect();
-        tiltX(((e.clientX - rect.left) / rect.width * 2 - 1) * 2);
-        tiltY((-(e.clientY - rect.top) / rect.height * 2 + 1) * 2);
-      }, { passive: true });
-    }
-
-    // ResizeObserver catches layout changes, not just window resizes, and is
-    // coalesced by the browser so it needs no manual debounce.
-    if ('ResizeObserver' in window) {
-      new ResizeObserver(() => {
-        const { clientWidth: w, clientHeight: h } = container;
-        if (!w || !h) return;
-        renderer.setSize(w, h);
-        camera.aspect = w / h;
-        camera.updateProjectionMatrix();
-      }).observe(container);
-    }
-  }
-})();
+    setTimeout(() => {
+      status.textContent = "TRANSMISSION SUCCESSFUL. PACKET DESTROYED.";
+      textarea.value = "";
+    }, 1200);
+  });
+}

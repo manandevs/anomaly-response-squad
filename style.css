@@ -6,21 +6,21 @@
 
 /* 1. TOKENS ---------------------------------------------------------------- */
 :root {
-  --font-body: 'Rajdhani', system-ui, sans-serif;
-  --font-display: 'Orbitron', system-ui, sans-serif;
+  --font-body: "Rajdhani", system-ui, sans-serif;
+  --font-display: "Orbitron", system-ui, sans-serif;
 
   --color-bg: #01040a;
   --color-surface: #0a0e17;
-  --color-primary-glow: #00d9ff;          /* Tactical cyan */
-  --color-accent-alert: #ff2a6d;          /* Alert red */
+  --color-primary-glow: #00d9ff; /* Tactical cyan */
+  --color-accent-alert: #ff2a6d; /* Alert red */
   --color-text: #cdd5f0;
-  --color-text-muted: #8b9ac2;            /* Body copy: 6.9:1 on surface */
-  --color-line: #6b7a99;                  /* Borders / hairlines only */
+  --color-text-muted: #8b9ac2; /* Body copy: 6.9:1 on surface */
+  --color-line: #6b7a99; /* Borders / hairlines only */
 
   --transition-fast: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-med: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 
-  --content-max: 1200px;
+  --content-max: 1440px;
   --gutter: 2rem;
   --space-section: 8rem;
   --header-offset: 6rem;
@@ -51,30 +51,24 @@ body {
   font-weight: 500;
   line-height: 1.6;
   overflow-x: hidden;
-}
-
-/* Animated grid backdrop. Transform (not background-position) keeps this on
-   the compositor instead of repainting the viewport every frame. */
-body::after {
-  content: '';
-  position: fixed;
-  inset: calc(var(--grid-cell) * -1);
-  background-image:
-    linear-gradient(to right, rgba(107, 122, 153, 0.1) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(107, 122, 153, 0.1) 1px, transparent 1px);
-  background-size: var(--grid-cell) var(--grid-cell);
-  animation: grid-pan 10s linear infinite;
-  pointer-events: none;
-  z-index: -1;
+  max-width: 1440px;
+  margin: auto;
 }
 
 @keyframes grid-pan {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(calc(var(--grid-cell) * -1), calc(var(--grid-cell) * -1), 0); }
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(
+      calc(var(--grid-cell) * -1),
+      calc(var(--grid-cell) * -1),
+      0
+    );
+  }
 }
 
-img,
-video {
+img {
   max-width: 100%;
 }
 
@@ -85,6 +79,7 @@ video {
 
 /* 3. UTILITIES ------------------------------------------------------------- */
 .container {
+  width: 100%;
   max-width: var(--content-max);
   margin-inline: auto;
   padding-inline: var(--gutter);
@@ -184,22 +179,25 @@ video {
   pointer-events: none;
   /* Position and hover scale are driven by GSAP; only colour transitions
      here, because GSAP's inline styles own `transform` and `scale`. */
-  transition: background-color 0.2s, border-color 0.2s;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
 }
 
 .cursor-dot {
-  width: 8px;
-  height: 8px;
-  margin: -4px 0 0 -4px;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
   background-color: var(--color-primary-glow);
   box-shadow: 0 0 10px var(--color-primary-glow);
 }
 
 .cursor-outline {
-  width: 40px;
-  height: 40px;
-  margin: -20px 0 0 -20px;
-  border: 1px solid rgba(0, 217, 255, 0.5);
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
+  border: 2px solid #00d9ff7c;
+  background-color: #00d9ff16;
 }
 
 /* The custom cursor only applies where there is a real pointer to replace, and
@@ -259,6 +257,9 @@ section {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  padding-inline: var(--gutter);
+  background: rgba(1, 4, 10, 0.8);
+  border: #cdd5f009 2px solid;
 }
 
 .logo {
@@ -295,7 +296,9 @@ section {
   padding: 0.6rem 1.5rem;
   text-decoration: none;
   white-space: nowrap;
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .cta-button:hover,
@@ -308,25 +311,38 @@ section {
 /* 6. SECTIONS -------------------------------------------------------------- */
 /* Hero */
 #mission-briefing {
-  min-height: 100vh;
-  min-height: 100svh;
+  position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  justify-content: start;
+  align-items: start;
+  text-align: start;
   overflow: hidden;
+  min-height: 800px;
 }
 
-.hero-video-bg {
+.hero-image-bg {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   min-width: 100%;
-  min-height: 100%;
-  object-fit: cover;
-  opacity: 0.2;
+  min-height: 1000px;
+  object-fit: contain;
   z-index: -1;
+}
+
+.hero-kicker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.hero-kicker-rule {
+  width: 30px;
+  height: 2px;
+  background-color: transparent;
+  box-shadow: 0 0 8px var(--color-primary-glow);
 }
 
 .hero-title {
@@ -335,7 +351,6 @@ section {
   line-height: 1.08;
   letter-spacing: 0.01em;
   text-transform: uppercase;
-  margin-top: 40px;
 }
 
 .glitch-text {
@@ -344,16 +359,24 @@ section {
 }
 
 @keyframes glitch {
-  2%, 64%  { transform: translate(2px, 0) skew(0deg); }
-  4%, 60%  { transform: translate(-2px, 0) skew(0deg); }
-  62%      { transform: translate(0, 0) skew(5deg); }
+  2%,
+  64% {
+    transform: translate(2px, 0) skew(0deg);
+  }
+  4%,
+  60% {
+    transform: translate(-2px, 0) skew(0deg);
+  }
+  62% {
+    transform: translate(0, 0) skew(5deg);
+  }
 }
 
 .hero-tagline {
   font-size: clamp(1rem, 2vw, 1.25rem);
   font-weight: 700;
   max-width: 46ch;
-  margin: 1.5rem auto 2.5rem;
+  margin: 4px 0 2.5rem;
   color: var(--color-text-muted);
 }
 
@@ -378,7 +401,7 @@ section {
 
 .intel-image {
   width: 100%;
-  height: 70vh;
+  height: 350px;
   object-fit: cover;
 }
 
@@ -394,7 +417,7 @@ section {
 }
 
 .redacted-text::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background-color: var(--color-text);
@@ -418,7 +441,9 @@ section {
   background-color: var(--color-surface);
   border: 1px solid var(--color-line);
   padding: 1.5rem;
-  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .dossier-card:hover {
@@ -560,7 +585,7 @@ section {
   font-weight: 700;
 }
 
-.form-status[data-state='error'] {
+.form-status[data-state="error"] {
   color: var(--color-accent-alert);
 }
 
@@ -597,9 +622,19 @@ section {
 }
 
 /* 7. RESPONSIVE ------------------------------------------------------------ */
-@media (max-width: 992px) {
+@media (max-width: 1200px) {
   :root {
     --space-section: 6rem;
+  }
+
+  #mission-briefing {
+    position: relative;
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    text-align: start;
+    overflow: hidden;
+    min-height: 300px;
   }
 
   #squad-intel,
